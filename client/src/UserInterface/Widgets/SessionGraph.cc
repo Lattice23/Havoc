@@ -83,24 +83,31 @@ Node* GraphWidget::GraphNodeAdd( SessionItem Session )
 
 void GraphWidget::GraphNodeRemove( SessionItem Session )
 {
-    for ( int i = 0; i < NodeList.size(); i++ )
+    for ( int i = NodeList.size() - 1; i >= 0; i-- )
     {
-        if ( Session.Name.compare( NodeList[ i ]->Name ) == 0 )
+        
+        if ( i >= 0 && i < NodeList.size() )
         {
-            GraphScene->removeItem( NodeList[ i ]->Node->NodeEdge );
-            GraphScene->removeItem( NodeList[ i ]->Node );
+            
+            if ( NodeList[ i ] != nullptr && Session.Name.compare( NodeList[ i ]->Name ) == 0 )
+            {
+                auto memberToRemove = NodeList[ i ];
 
-            NodeList.erase( NodeList.begin() + i );
-            MainNode->Node->removeChild( NodeList[ i ]->Node );
+                
+                if ( memberToRemove->Node->NodeEdge )
+                    GraphScene->removeItem( memberToRemove->Node->NodeEdge );
+                
+                GraphScene->removeItem( memberToRemove->Node );
 
-            /* delete NodeList[ i ]->Node->NodeEdge;
-            delete NodeList[ i ]->Node;
-            delete NodeList[ i ]; */
+                MainNode->Node->removeChild( memberToRemove->Node );
+                NodeList.erase( NodeList.begin() + i );
 
-            return;
+                return;
+            }
         }
     }
 }
+
 
 void GraphWidget::GraphPivotNodeAdd( QString AgentID, SessionItem Session )
 {
